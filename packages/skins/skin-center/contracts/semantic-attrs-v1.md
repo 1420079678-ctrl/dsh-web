@@ -26,10 +26,10 @@
 | --- | --- | --- |
 | `root` | shell | 应用根出口；`[data-slot="root"]` |
 | `sidebar` | shell | 左导航列；`[data-slot="sidebar"]`（列容器本体上游缝落地前经适配器） |
-| `conversation` | shell | 中栏主区；`[data-slot="conversation"]` |
+| `conversation` | shell | 中栏主区；`[data-slot="conversation"]`（旧 shell）/ `[class*="centerCol"]`（dsh 0.1.7 起中栏无 data 钩子，以 CSS-module 后缀锚定） |
 | `session-header` | shell | 会话头；`[data-slot="conversation.session.header"]` |
 | `composer` | shell | 输入区；`[data-slot="conversation.composer"]` |
-| `details` | shell | 右详情列；`[data-slot="details"]` |
+| `details` | shell | 右详情列；`[data-slot="details"]`（旧 shell）/ `[data-rightbar-col]`（dsh 0.1.7 起官方钩子，收起时 0 宽、打标不产生绘制） |
 | `settings` | shell | 设置模态；`[role="dialog"]` 内含 `[data-slot="settings.section"]` 组合判定 |
 | `overlay` | shell | 帧级浮层；`[data-shell-overlay]` / `[data-slot="shell.overlay"]` |
 
@@ -54,7 +54,7 @@ shell 区域（owner: shell）：
 | `message-row` | 聊天流条目；`[data-chat-flow-kind]` |
 | `message-body` | 助手消息正文；`[data-streaming]` 根 |
 | `scrollport` | 会话滚动口；`[data-conversation-scroll]` |
-| `composer-input` | 输入 textarea；`textarea[data-phase]` |
+| `composer-input` | 输入框；`textarea[data-phase]`（旧 shell）/ `[data-composer-input]`（现行 Lexical contenteditable 输入框） |
 | `composer-chip` | 输入引用 chip；`[data-decoration="chip"]` |
 | `queue-dock` | 排队条；`[data-queue-dock]` |
 | `turn-tail` | turn 尾行；`[data-turn-tail]` |
