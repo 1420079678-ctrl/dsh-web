@@ -1,10 +1,11 @@
 /** @vitest-environment jsdom */
 
 /**
- * Sidebar foot card mounting: the container seats as the shell foot area's
- * last child (directly below the Settings row), self-heals through the shared
- * body-mutation hub when the shell re-renders around it, stays single under
- * duplicate mounts, and replays the user's settings path on click-through.
+ * Sidebar foot card mounting: the container seats in the shell foot area
+ * directly above the Settings row (keeping Settings the terminal row),
+ * self-heals through the shared body-mutation hub when the shell re-renders
+ * around it, stays single under duplicate mounts, and replays the user's
+ * settings path on click-through.
  * The React body is covered by foot-card.spec.tsx; here only DOM placement
  * and the settings-navigation replay are under test.
  */
@@ -61,18 +62,18 @@ function mountProps(extra: Partial<UsageFootCardProps> = {}): UsageFootCardProps
 }
 
 describe('mountUsageFootCard placement', () => {
-  it('user finds the card directly below the sidebar Settings row', () => {
+  it('user finds the card directly above the sidebar Settings row', () => {
     // Given the shell sidebar with its foot area
     const { foot, settingsArea } = shell()
 
     // When the foot card mounts
     const dispose = mountUsageFootCard(mountProps())
 
-    // Then its container is the foot area's last child, below the Settings seat
+    // Then its container sits just before the Settings seat, which stays last
     const container = document.querySelector(FOOT_CARD_SELECTOR)
     expect(container?.parentElement).toBe(foot)
-    expect(foot.lastElementChild).toBe(container)
-    expect(settingsArea.nextElementSibling).toBe(container)
+    expect(container?.nextElementSibling).toBe(settingsArea)
+    expect(foot.lastElementChild).toBe(settingsArea)
     dispose()
   })
 
@@ -92,18 +93,18 @@ describe('mountUsageFootCard placement', () => {
     expect(document.querySelectorAll(FOOT_CARD_SELECTOR)).toHaveLength(0)
   })
 
-  it('user keeps the card at the foot bottom when the shell appends below it', async () => {
-    // Given a mounted card the shell then displaces with a late child
-    const { foot } = shell()
+  it('user keeps the card directly above Settings when the shell inserts a node between them', async () => {
+    // Given a mounted card seated directly above the Settings seat
+    const { foot, settingsArea } = shell()
     const dispose = mountUsageFootCard(mountProps())
     const container = document.querySelector(FOOT_CARD_SELECTOR)
 
-    // When the shell re-renders and a foreign node lands below the card
-    foot.append(document.createElement('div'))
+    // When the shell re-renders and a foreign node lands between the two
+    foot.insertBefore(document.createElement('div'), settingsArea)
 
-    // Then the next body-mutation flush re-seats the card as the last child
+    // Then the next body-mutation flush re-seats the card above Settings
     await vi.waitFor(() => {
-      expect(foot.lastElementChild).toBe(container)
+      expect(container?.nextElementSibling).toBe(settingsArea)
     })
     dispose()
   })
@@ -118,10 +119,10 @@ describe('mountUsageFootCard placement', () => {
     first.column.remove()
     const second = shell()
 
-    // Then the card re-seats into the new foot area, again below Settings
+    // Then the card re-seats into the new foot area, again above Settings
     await vi.waitFor(() => {
       expect(container?.parentElement).toBe(second.foot)
-      expect(second.foot.lastElementChild).toBe(container)
+      expect(container?.nextElementSibling).toBe(second.settingsArea)
     })
     dispose()
   })

@@ -1,12 +1,13 @@
 /**
  * Sidebar foot card mounting.
  *
- * The shell sidebar exposes no slot BELOW its Settings row (the foot's only
- * slot, sidebar.footer.action, stacks above it), so the card container is
- * appended as the last child of the shell's foot area and self-heals with the
- * page-wide body-mutation hub: a React re-render that displaces the container
- * re-seats it on the next frame, and a whole-pane rebuild is noticed by the
- * same body-level watcher the family entry rows use.
+ * The foot's only slot (sidebar.footer.action) stacks ABOVE the Settings row
+ * and cannot host a block, so the card container is inserted into the shell's
+ * foot area directly above the Settings seat — keeping Settings the foot's
+ * terminal row instead of hanging a card off the sidebar floor. It self-heals
+ * with the page-wide body-mutation hub: a React re-render that displaces the
+ * container re-seats it on the next frame, and a whole-pane rebuild is noticed
+ * by the same body-level watcher the family entry rows use.
  *
  * The container is a plain div carrying its own React root, so it can never
  * disturb the shell's reconciliation.
@@ -73,7 +74,7 @@ export function openUsageSettings(label: () => string): void {
 }
 
 /**
- * Mount the sidebar foot card below the Settings row.
+ * Mount the sidebar foot card directly above the Settings row.
  * @param props - the store/poll/settings/open inputs of the apply body.
  * @returns disposer removing the container and its observers.
  */
@@ -88,11 +89,17 @@ export function mountUsageFootCard(props: UsageFootCardProps): () => void {
   const root: Root = createRoot(container)
   root.render(createElement(UsageFootCard, props))
 
-  /** Keep the container the foot area's last child — directly below Settings. */
+  /** Keep the container directly above the Settings seat inside the foot area. */
   const place = (): void => {
     const foot = footArea()
     if (foot === undefined) return
-    if (container.parentElement !== foot || foot.lastElementChild !== container) foot.append(container)
+    const settings = foot.querySelector<HTMLElement>('[class*="settingsArea"]')
+    if (settings !== null) {
+      if (container.nextElementSibling !== settings) foot.insertBefore(container, settings)
+      return
+    }
+    // No Settings seat to anchor against (shell change): fall back to the tail.
+    if (foot.lastElementChild !== container) foot.append(container)
   }
   place()
   const unsubscribeBody = subscribeBodyInvalidations(place)

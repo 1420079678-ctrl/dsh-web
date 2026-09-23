@@ -347,6 +347,40 @@ describe('UsageFootCard collapse state', () => {
     expect(window.localStorage.getItem(FOOT_CARD_COLLAPSED_KEY)).toBe('0')
   })
 
+  it('user reads the spending provider to the left of the collapsed spend label', () => {
+    // Given a collapsed card whose priced day row belongs to DeepSeek
+    document.documentElement.lang = 'zh'
+    window.localStorage.setItem(FOOT_CARD_COLLAPSED_KEY, '1')
+    const over = overview([deepseekBalance], { calls: 45, cost: 12.34 })
+    over.usage.today.providers = [
+      { provider: 'deepseek', totals: { ...emptyTotals(), calls: 45, cost: 12.34 }, models: [] },
+    ]
+
+    // When the card renders collapsed
+    const { container } = render(<UsageFootCard {...cardProps(over)} />)
+
+    // Then the provider name sits before the spend label in the strip
+    const text = container.querySelector('[data-dsh-part="foot-card-strip"]')?.textContent ?? ''
+    expect(text.indexOf('DeepSeek')).toBeGreaterThanOrEqual(0)
+    expect(text.indexOf('DeepSeek')).toBeLessThan(text.indexOf('今日消费'))
+    expect(text).toContain('¥12.34')
+  })
+
+  it('user reads no provider name when the collapsed headline falls back to tokens', () => {
+    // Given a collapsed card with unpriced usage only
+    document.documentElement.lang = 'zh'
+    window.localStorage.setItem(FOOT_CARD_COLLAPSED_KEY, '1')
+    const over = overview([deepseekBalance], { inputTokens: 3000, calls: 3 })
+
+    // When the card renders collapsed
+    const { container } = render(<UsageFootCard {...cardProps(over)} />)
+
+    // Then the token headline names no spender
+    const text = container.querySelector('[data-dsh-part="foot-card-strip"]')?.textContent ?? ''
+    expect(text).toContain('今日用量')
+    expect(text).not.toContain('DeepSeek')
+  })
+
   it('user collapse choice survives a remount', () => {
     // Given a persisted collapsed flag
     document.documentElement.lang = 'zh'

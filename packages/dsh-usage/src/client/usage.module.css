@@ -393,20 +393,28 @@
    the 56px rail (the frame carries data-sidebar-collapsed).
    --------------------------------------------------------------------------- */
 
+/* Seated above the Settings row as a native sidebar row: the shell's row
+   radius and hover fill, with none of the card chrome that made it read as a
+   pill pasted onto the foot. Only the expanded body keeps a faint surface to
+   hold its four lines together; the collapsed strip is a plain 36px row. */
 .footCard {
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  margin: 4px 0 8px;
-  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-  border-radius: 10px;
+  margin: 2px 0 4px;
+  border: none;
+  border-radius: 12px;
   background: color-mix(in srgb, currentColor 4%, transparent);
   color: inherit;
   transition: background-color 120ms ease;
 }
 
 .footCard:hover {
-  background: color-mix(in srgb, currentColor 7%, transparent);
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.footCardCollapsed {
+  background: transparent;
 }
 
 .footMain {
@@ -416,9 +424,9 @@
   flex-direction: column;
   gap: 4px;
   width: 100%;
-  padding: 9px 12px;
+  padding: 8px;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   background: transparent;
   color: inherit;
   font: inherit;
@@ -517,7 +525,8 @@
 
 /* Collapsed strip: tighter chrome, one horizontal line, room for the toggle. */
 .footCardCollapsed .footMain {
-  padding: 5px 12px;
+  min-height: 36px;
+  padding: 7px 8px;
 }
 
 .footStrip {
@@ -534,6 +543,14 @@
   display: block;
   flex: none;
   opacity: 0.65;
+}
+
+.footStripProvider {
+  flex: none;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
 }
 
 .footStripLabel {

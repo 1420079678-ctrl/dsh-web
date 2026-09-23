@@ -7,8 +7,8 @@
  *   falling back to today's tokens when nothing priced was recorded), a
  *   tokens/calls line, up to two configured-provider balances, and an
  *   updated-at footer;
- * - collapsed: a one-line strip with the gauge glyph, the label and the
- *   headline value.
+ * - collapsed: a one-line strip with the gauge glyph, the spending
+ *   provider's name, the label and the headline value.
  *
  * The card body is one button that opens the settings panel on the usage
  * section, so detail lives in exactly one place; the corner chevron toggles
@@ -123,13 +123,33 @@ function formatClock(ms: number): string {
 }
 
 /**
- * The headline pair: today's priced spend, else today's tokens, else zero.
- * tokenFallback tells the sub-line to keep only the call count instead of
- * repeating the total the headline already shows.
+ * Display name of the provider owning today's priced spend: the day's highest
+ * cost row, else the current session route, resolved through the provider
+ * snapshot (an older host without the day rows falls back to the current
+ * route). Undefined when there is no route to name.
  */
-function headline(snapshot: UsageOverviewView): { label: string; value: string; tokenFallback: boolean } {
+function spendProvider(snapshot: UsageOverviewView): string | undefined {
+  let top: UsageOverviewView['usage']['today']['providers'][number] | undefined
+  for (const row of snapshot.usage.today.providers) {
+    if (row.totals.cost <= 0) continue
+    if (top === undefined || row.totals.cost > top.totals.cost) top = row
+  }
+  const route = top?.provider ?? snapshot.current.provider
+  if (route === undefined) return undefined
+  return snapshot.providers.find((entry) => entry.provider === route)?.displayName
+    ?? (route === snapshot.current.provider ? snapshot.current.displayName : undefined)
+    ?? route
+}
+
+/**
+ * The headline triple: today's priced spend, else today's tokens, else zero.
+ * tokenFallback tells the sub-line to keep only the call count instead of
+ * repeating the total the headline already shows; provider names the spender
+ * beside the collapsed cost headline.
+ */
+function headline(snapshot: UsageOverviewView): { label: string; value: string; tokenFallback: boolean; provider?: string } {
   const totals = snapshot.usage.today.totals
-  if (totals.cost > 0) return { label: t('usage.foot.cost'), value: '¥' + totals.cost.toFixed(2), tokenFallback: false }
+  if (totals.cost > 0) return { label: t('usage.foot.cost'), value: '¥' + totals.cost.toFixed(2), tokenFallback: false, provider: spendProvider(snapshot) }
   if (totals.calls > 0) return { label: t('usage.today'), value: formatTokens(totalTokens(totals)) + ' tokens', tokenFallback: true }
   return { label: t('usage.foot.cost'), value: '¥0.00', tokenFallback: false }
 }
@@ -253,6 +273,7 @@ export function UsageFootCard(props: UsageFootCardProps): ReactNode {
         <button type="button" className={styles.footMain} data-dsh-part="foot-card-main" aria-label={t('usage.foot.open')} title={t('usage.foot.open')} onClick={onOpen}>
           <span className={styles.footStrip} data-dsh-part="foot-card-strip">
             <GaugeIcon />
+            {head.provider !== undefined && <span className={styles.footStripProvider}>{head.provider}</span>}
             <span className={styles.footStripLabel}>{head.label}</span>
             <span className={styles.footStripValue}>{head.value}</span>
           </span>
