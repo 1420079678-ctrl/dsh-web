@@ -1527,6 +1527,18 @@
       "npm": "dsh-claude-style",
       "category": "ui",
       "subcategory": "render"
+    },
+    {
+      "id": "agent-body",
+      "name": "Agent-Body 器官化插件层",
+      "rank": 120,
+      "nameEn": "Agent-Body",
+      "author": "1420079678-ctrl",
+      "description": "把 DSH 插件组织成一具身体：插件声明自己是器官（能力 / 感知 / 反射弧），内核提供变速心跳、神经冲动路由、零模型调用反射弧、睡眠期记忆巩固与闭环自愈；失败先确定性归因再决定是否重试，工具 schema 按当前意图显影（仓库内冷启动基准 48 条命令省下 84.71% 的 tool schema token）。",
+      "descriptionEn": "Organises DSH plugins into a body: the plugins declare themselves organs (capabilities, senses, reflex arcs) and the kernel supplies the rest of the physiology — a variable-interval heartbeat, nerve-impulse routing, reflex arcs that fire with zero model calls, sleep-time memory consolidation and closed-loop self-healing. Failures are attributed before anything is retried, and tool schemas are gated by the current intent (84.71% of tool-schema tokens gated away across 48 commands, cold-start).",
+      "repo": "https://github.com/1420079678-ctrl/agent-body",
+      "category": "tools",
+      "subcategory": "dev"
     }
   ]
 }
