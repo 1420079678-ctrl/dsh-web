@@ -218,6 +218,7 @@ const MANIFEST = [
       'packages/dsh-task-board/src/client/body-mutations.ts',
       'packages/dsh-skill-explorer/src/client/body-mutations.ts',
       'packages/dsh-web-all/src/client/body-mutations.ts',
+      'packages/dsh-usage/src/client/body-mutations.ts',
     ],
   },
   {

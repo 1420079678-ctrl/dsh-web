@@ -8733,10 +8733,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region ../dsh-task-board/src/client/body-mutations.ts
 		/** Cross-bundle registry key; `Symbol.for` so every module copy agrees. */
-		const HUB_KEY$3 = Symbol.for("dsh-web.body-mutation-hub");
-		const INVALIDATION_ONLY$3 = Symbol.for("dsh-web.body-mutation-invalidation");
-		function needsRecords$3(subscribers) {
-			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$3]) return true;
+		const HUB_KEY$4 = Symbol.for("dsh-web.body-mutation-hub");
+		const INVALIDATION_ONLY$4 = Symbol.for("dsh-web.body-mutation-invalidation");
+		function needsRecords$4(subscribers) {
+			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$4]) return true;
 			return false;
 		}
 		/**
@@ -8744,12 +8744,12 @@ window.__ModuleLoader__.load({
 		* The marked wrapper also works with an older hub, which delivers records
 		* that it simply ignores until a page reload picks up the updated hub.
 		*/
-		function subscribeBodyInvalidations$3(subscriber) {
+		function subscribeBodyInvalidations$4(subscriber) {
 			const listener = () => {
 				subscriber();
 			};
-			listener[INVALIDATION_ONLY$3] = true;
-			return subscribeBodyMutations$3(listener);
+			listener[INVALIDATION_ONLY$4] = true;
+			return subscribeBodyMutations$4(listener);
 		}
 		/**
 		* Subscribe to body-level childList mutations.
@@ -8758,11 +8758,11 @@ window.__ModuleLoader__.load({
 		* @returns the disposer removing this subscriber (and the observer when it was
 		*   the last one).
 		*/
-		function subscribeBodyMutations$3(subscriber) {
+		function subscribeBodyMutations$4(subscriber) {
 			if (typeof globalThis === "undefined" || typeof document === "undefined") return () => {};
 			if (typeof MutationObserver !== "function") return () => {};
 			const registry = globalThis;
-			let hub = registry[HUB_KEY$3];
+			let hub = registry[HUB_KEY$4];
 			if (hub === void 0) {
 				const subscribers = /* @__PURE__ */ new Set();
 				const created = {
@@ -8790,14 +8790,14 @@ window.__ModuleLoader__.load({
 					else flush();
 				};
 				created.observer = new MutationObserver((records) => {
-					if (needsRecords$3(subscribers)) for (const record of records) created.pending.push(record);
+					if (needsRecords$4(subscribers)) for (const record of records) created.pending.push(record);
 					schedule();
 				});
 				created.observer.observe(document.body ?? document.documentElement, {
 					childList: true,
 					subtree: true
 				});
-				registry[HUB_KEY$3] = created;
+				registry[HUB_KEY$4] = created;
 				hub = created;
 			}
 			const active = hub;
@@ -8807,14 +8807,14 @@ window.__ModuleLoader__.load({
 				if (!subscribed) return;
 				subscribed = false;
 				active.subscribers.delete(subscriber);
-				if (!needsRecords$3(active.subscribers)) active.pending = [];
-				if (active.subscribers.size === 0 && registry[HUB_KEY$3] === active) {
+				if (!needsRecords$4(active.subscribers)) active.pending = [];
+				if (active.subscribers.size === 0 && registry[HUB_KEY$4] === active) {
 					active.observer.disconnect();
 					if (active.frame !== void 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(active.frame);
 					active.frame = void 0;
 					active.pending = [];
 					active.scheduled = false;
-					delete registry[HUB_KEY$3];
+					delete registry[HUB_KEY$4];
 				}
 			};
 		}
@@ -8882,7 +8882,7 @@ window.__ModuleLoader__.load({
 				root = (0, react_dom_client.createRoot)(container);
 				options.render(root);
 			};
-			const unsubscribeBody = subscribeBodyInvalidations$3(() => {
+			const unsubscribeBody = subscribeBodyInvalidations$4(() => {
 				ensure();
 			});
 			const applyActive = () => {
@@ -9051,7 +9051,7 @@ window.__ModuleLoader__.load({
 					subtree: true
 				});
 			};
-			const unsubscribeBody = subscribeBodyInvalidations$3(() => {
+			const unsubscribeBody = subscribeBodyInvalidations$4(() => {
 				tryPlace();
 			});
 			const rootObserver = new MutationObserver(() => {
@@ -13858,14 +13858,14 @@ window.__ModuleLoader__.load({
 			return status === 401 || status === 403;
 		}
 		/** Human-readable expiry clock, e.g. "10:35". */
-		function formatClock$1(epochMs) {
+		function formatClock$2(epochMs) {
 			const date = new Date(epochMs);
 			return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 		}
 		/** Calendar + clock for last-seen timestamps, e.g. "2026-08-19 10:35". */
 		function formatLastSeen(epochMs) {
 			const date = new Date(epochMs);
-			return `${String(date.getFullYear())}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${formatClock$1(epochMs)}`;
+			return `${String(date.getFullYear())}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${formatClock$2(epochMs)}`;
 		}
 		/**
 		* Copy text to the clipboard with a fallback for insecure contexts
@@ -14154,7 +14154,7 @@ window.__ModuleLoader__.load({
 								children: t("pair.expired")
 							}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 								className: remote_module_css_default.expiry,
-								children: t("pair.expires", { time: formatClock$1(state.expiresAt) })
+								children: t("pair.expires", { time: formatClock$2(state.expiresAt) })
 							})
 						]
 					}),
@@ -38775,10 +38775,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region ../dsh-ssh/src/client/body-mutations.ts
 		/** Cross-bundle registry key; `Symbol.for` so every module copy agrees. */
-		const HUB_KEY$2 = Symbol.for("dsh-web.body-mutation-hub");
-		const INVALIDATION_ONLY$2 = Symbol.for("dsh-web.body-mutation-invalidation");
-		function needsRecords$2(subscribers) {
-			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$2]) return true;
+		const HUB_KEY$3 = Symbol.for("dsh-web.body-mutation-hub");
+		const INVALIDATION_ONLY$3 = Symbol.for("dsh-web.body-mutation-invalidation");
+		function needsRecords$3(subscribers) {
+			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$3]) return true;
 			return false;
 		}
 		/**
@@ -38786,12 +38786,12 @@ window.__ModuleLoader__.load({
 		* The marked wrapper also works with an older hub, which delivers records
 		* that it simply ignores until a page reload picks up the updated hub.
 		*/
-		function subscribeBodyInvalidations$2(subscriber) {
+		function subscribeBodyInvalidations$3(subscriber) {
 			const listener = () => {
 				subscriber();
 			};
-			listener[INVALIDATION_ONLY$2] = true;
-			return subscribeBodyMutations$2(listener);
+			listener[INVALIDATION_ONLY$3] = true;
+			return subscribeBodyMutations$3(listener);
 		}
 		/**
 		* Subscribe to body-level childList mutations.
@@ -38800,11 +38800,11 @@ window.__ModuleLoader__.load({
 		* @returns the disposer removing this subscriber (and the observer when it was
 		*   the last one).
 		*/
-		function subscribeBodyMutations$2(subscriber) {
+		function subscribeBodyMutations$3(subscriber) {
 			if (typeof globalThis === "undefined" || typeof document === "undefined") return () => {};
 			if (typeof MutationObserver !== "function") return () => {};
 			const registry = globalThis;
-			let hub = registry[HUB_KEY$2];
+			let hub = registry[HUB_KEY$3];
 			if (hub === void 0) {
 				const subscribers = /* @__PURE__ */ new Set();
 				const created = {
@@ -38832,14 +38832,14 @@ window.__ModuleLoader__.load({
 					else flush();
 				};
 				created.observer = new MutationObserver((records) => {
-					if (needsRecords$2(subscribers)) for (const record of records) created.pending.push(record);
+					if (needsRecords$3(subscribers)) for (const record of records) created.pending.push(record);
 					schedule();
 				});
 				created.observer.observe(document.body ?? document.documentElement, {
 					childList: true,
 					subtree: true
 				});
-				registry[HUB_KEY$2] = created;
+				registry[HUB_KEY$3] = created;
 				hub = created;
 			}
 			const active = hub;
@@ -38849,14 +38849,14 @@ window.__ModuleLoader__.load({
 				if (!subscribed) return;
 				subscribed = false;
 				active.subscribers.delete(subscriber);
-				if (!needsRecords$2(active.subscribers)) active.pending = [];
-				if (active.subscribers.size === 0 && registry[HUB_KEY$2] === active) {
+				if (!needsRecords$3(active.subscribers)) active.pending = [];
+				if (active.subscribers.size === 0 && registry[HUB_KEY$3] === active) {
 					active.observer.disconnect();
 					if (active.frame !== void 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(active.frame);
 					active.frame = void 0;
 					active.pending = [];
 					active.scheduled = false;
-					delete registry[HUB_KEY$2];
+					delete registry[HUB_KEY$3];
 				}
 			};
 		}
@@ -38924,7 +38924,7 @@ window.__ModuleLoader__.load({
 				root = (0, react_dom_client.createRoot)(container);
 				options.render(root);
 			};
-			const unsubscribeBody = subscribeBodyInvalidations$2(() => {
+			const unsubscribeBody = subscribeBodyInvalidations$3(() => {
 				ensure();
 			});
 			const applyActive = () => {
@@ -39234,7 +39234,7 @@ window.__ModuleLoader__.load({
 					subtree: true
 				});
 			};
-			const unsubscribeBody = subscribeBodyInvalidations$2(() => {
+			const unsubscribeBody = subscribeBodyInvalidations$3(() => {
 				tryPlace();
 			});
 			const rootObserver = new MutationObserver(() => {
@@ -42500,10 +42500,10 @@ window.__ModuleLoader__.load({
 		//#endregion
 		//#region ../dsh-skill-explorer/src/client/body-mutations.ts
 		/** Cross-bundle registry key; `Symbol.for` so every module copy agrees. */
-		const HUB_KEY$1 = Symbol.for("dsh-web.body-mutation-hub");
-		const INVALIDATION_ONLY$1 = Symbol.for("dsh-web.body-mutation-invalidation");
-		function needsRecords$1(subscribers) {
-			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$1]) return true;
+		const HUB_KEY$2 = Symbol.for("dsh-web.body-mutation-hub");
+		const INVALIDATION_ONLY$2 = Symbol.for("dsh-web.body-mutation-invalidation");
+		function needsRecords$2(subscribers) {
+			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$2]) return true;
 			return false;
 		}
 		/**
@@ -42511,12 +42511,12 @@ window.__ModuleLoader__.load({
 		* The marked wrapper also works with an older hub, which delivers records
 		* that it simply ignores until a page reload picks up the updated hub.
 		*/
-		function subscribeBodyInvalidations$1(subscriber) {
+		function subscribeBodyInvalidations$2(subscriber) {
 			const listener = () => {
 				subscriber();
 			};
-			listener[INVALIDATION_ONLY$1] = true;
-			return subscribeBodyMutations$1(listener);
+			listener[INVALIDATION_ONLY$2] = true;
+			return subscribeBodyMutations$2(listener);
 		}
 		/**
 		* Subscribe to body-level childList mutations.
@@ -42525,11 +42525,11 @@ window.__ModuleLoader__.load({
 		* @returns the disposer removing this subscriber (and the observer when it was
 		*   the last one).
 		*/
-		function subscribeBodyMutations$1(subscriber) {
+		function subscribeBodyMutations$2(subscriber) {
 			if (typeof globalThis === "undefined" || typeof document === "undefined") return () => {};
 			if (typeof MutationObserver !== "function") return () => {};
 			const registry = globalThis;
-			let hub = registry[HUB_KEY$1];
+			let hub = registry[HUB_KEY$2];
 			if (hub === void 0) {
 				const subscribers = /* @__PURE__ */ new Set();
 				const created = {
@@ -42557,14 +42557,14 @@ window.__ModuleLoader__.load({
 					else flush();
 				};
 				created.observer = new MutationObserver((records) => {
-					if (needsRecords$1(subscribers)) for (const record of records) created.pending.push(record);
+					if (needsRecords$2(subscribers)) for (const record of records) created.pending.push(record);
 					schedule();
 				});
 				created.observer.observe(document.body ?? document.documentElement, {
 					childList: true,
 					subtree: true
 				});
-				registry[HUB_KEY$1] = created;
+				registry[HUB_KEY$2] = created;
 				hub = created;
 			}
 			const active = hub;
@@ -42574,14 +42574,14 @@ window.__ModuleLoader__.load({
 				if (!subscribed) return;
 				subscribed = false;
 				active.subscribers.delete(subscriber);
-				if (!needsRecords$1(active.subscribers)) active.pending = [];
-				if (active.subscribers.size === 0 && registry[HUB_KEY$1] === active) {
+				if (!needsRecords$2(active.subscribers)) active.pending = [];
+				if (active.subscribers.size === 0 && registry[HUB_KEY$2] === active) {
 					active.observer.disconnect();
 					if (active.frame !== void 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(active.frame);
 					active.frame = void 0;
 					active.pending = [];
 					active.scheduled = false;
-					delete registry[HUB_KEY$1];
+					delete registry[HUB_KEY$2];
 				}
 			};
 		}
@@ -42690,7 +42690,7 @@ window.__ModuleLoader__.load({
 					subtree: true
 				});
 			};
-			const unsubscribeBody = subscribeBodyInvalidations$1(() => {
+			const unsubscribeBody = subscribeBodyInvalidations$2(() => {
 				tryPlace();
 			});
 			const rootObserver = new MutationObserver(() => {
@@ -42964,7 +42964,12 @@ window.__ModuleLoader__.load({
 			"usage.bank.window": "统计窗口 {from} ~ {to}",
 			"usage.bank.save": "保存图片",
 			"usage.bank.share": "分享",
-			"usage.bank.drawError": "票券生成失败：{error}"
+			"usage.bank.drawError": "票券生成失败：{error}",
+			"usage.foot.cost": "今日消费",
+			"usage.foot.noData": "今日暂无用量",
+			"usage.foot.open": "打开使用统计设置",
+			"usage.foot.collapse": "收起用量卡片",
+			"usage.foot.expand": "展开用量卡片"
 		};
 		/** English mirror; every zh key present. */
 		const en$3 = {
@@ -43017,7 +43022,12 @@ window.__ModuleLoader__.load({
 			"usage.bank.window": "Window {from} - {to}",
 			"usage.bank.save": "Save image",
 			"usage.bank.share": "Share",
-			"usage.bank.drawError": "Failed to render the voucher: {error}"
+			"usage.bank.drawError": "Failed to render the voucher: {error}",
+			"usage.foot.cost": "Today spend",
+			"usage.foot.noData": "No usage yet today",
+			"usage.foot.open": "Open usage statistics settings",
+			"usage.foot.collapse": "Collapse the usage card",
+			"usage.foot.expand": "Expand the usage card"
 		};
 		/**
 		* Active dictionary, picked by the document language at call time. The
@@ -43035,7 +43045,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:packages/dsh-usage/src/client/usage.module.css.mjs
-		const css$3 = ".cvtkAW_section{color:inherit;flex-direction:column;gap:16px;display:flex}.cvtkAW_header{justify-content:space-between;align-items:center;gap:12px;display:flex}.cvtkAW_currentProvider{opacity:.75;font-size:13px}.cvtkAW_refreshBtn{appearance:none;color:inherit;font:inherit;cursor:pointer;opacity:.85;background:0 0;border:1px solid;border-radius:8px;padding:4px 12px;font-size:12px;transition:opacity .12s,background-color .12s}.cvtkAW_refreshBtn:hover:not(:disabled){opacity:1;background:color-mix(in srgb, currentColor 8%, transparent)}.cvtkAW_refreshBtn:disabled{cursor:default;opacity:.5}.cvtkAW_refreshBtn:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_tabs{border-bottom:1px solid color-mix(in srgb, currentColor 14%, transparent);gap:4px;display:flex}.cvtkAW_tab{appearance:none;color:inherit;font:inherit;cursor:pointer;opacity:.65;background:0 0;border:none;border-bottom:2px solid #0000;margin-bottom:-1px;padding:6px 14px;font-size:13px}.cvtkAW_tab:hover{opacity:.9}.cvtkAW_tab:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_tabActive{opacity:1;border-bottom-color:currentColor;font-weight:600}.cvtkAW_card{border:1px solid color-mix(in srgb, currentColor 14%, transparent);border-radius:12px;flex-direction:column;gap:10px;padding:14px 16px;display:flex}.cvtkAW_cardTitle{letter-spacing:.04em;text-transform:uppercase;opacity:.6;font-size:12px;font-weight:600}.cvtkAW_statRow{flex-wrap:wrap;gap:18px;display:flex}.cvtkAW_stat{flex-direction:column;gap:2px;display:flex}.cvtkAW_statValue{font-variant-numeric:tabular-nums;font-size:18px;font-weight:600}.cvtkAW_statLabel{opacity:.6;font-size:11px}.cvtkAW_providerRow{border-top:1px solid color-mix(in srgb, currentColor 8%, transparent);justify-content:space-between;align-items:center;gap:12px;padding:6px 0;font-size:13px;display:flex}.cvtkAW_providerRow:first-of-type{border-top:none}.cvtkAW_providerName{align-items:center;gap:8px;min-width:0;display:flex}.cvtkAW_providerTokens{font-variant-numeric:tabular-nums;opacity:.75;white-space:nowrap}.cvtkAW_providerBalance{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}.cvtkAW_currentBadge{border:1px solid color-mix(in srgb, currentColor 35%, transparent);opacity:.8;border-radius:999px;flex:none;padding:1px 7px;font-size:10px;font-weight:600}.cvtkAW_chart{flex-direction:column;gap:12px;display:flex}.cvtkAW_chartProvider{flex-direction:column;gap:4px;display:flex}.cvtkAW_chartHead{justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;display:flex}.cvtkAW_chartTokens{font-variant-numeric:tabular-nums;opacity:.65;white-space:nowrap;font-size:11px}.cvtkAW_chartBar{background:color-mix(in srgb, currentColor 8%, transparent);border-radius:999px;height:8px;display:block;overflow:hidden}.cvtkAW_chartFill{background:color-mix(in srgb, currentColor 55%, transparent);border-radius:999px;height:100%;transition:width .3s;display:block}.cvtkAW_chartModel{opacity:.8;grid-template-columns:minmax(80px,180px) 1fr auto;align-items:center;gap:8px;padding-left:14px;font-size:11px;display:grid}.cvtkAW_chartModelName{text-overflow:ellipsis;white-space:nowrap;opacity:.8;overflow:hidden}.cvtkAW_chartModelBar{background:color-mix(in srgb, currentColor 6%, transparent);border-radius:999px;height:4px;display:block;overflow:hidden}.cvtkAW_chartModelFill{background:color-mix(in srgb, currentColor 35%, transparent);border-radius:999px;height:100%;transition:width .3s;display:block}.cvtkAW_trendAxis{opacity:.5;font-variant-numeric:tabular-nums;justify-content:space-between;font-size:10px;display:flex}.cvtkAW_muted{opacity:.6;font-size:12px}.cvtkAW_voucherPreview canvas{border-radius:8px;width:100%;height:auto;display:block}.cvtkAW_buttonRow{gap:8px;display:flex}.cvtkAW_errorLine{opacity:.75;font-size:12px}.cvtkAW_planCard{flex-direction:column;gap:8px;display:flex}.cvtkAW_planHead{justify-content:space-between;align-items:baseline;gap:10px;display:flex}.cvtkAW_planName{font-size:14px;font-weight:600}.cvtkAW_windowRow{flex-direction:column;gap:4px;display:flex}.cvtkAW_windowLabel{opacity:.8;font-variant-numeric:tabular-nums;justify-content:space-between;font-size:12px;display:flex}.cvtkAW_bar{background:color-mix(in srgb, currentColor 10%, transparent);border-radius:999px;height:6px;overflow:hidden}.cvtkAW_barFill{background:color-mix(in srgb, currentColor 55%, transparent);border-radius:999px;height:100%;transition:width .3s}.cvtkAW_barWarn{background:#d97706}.cvtkAW_barLow{background:#dc2626}.cvtkAW_resetLine{opacity:.55;font-variant-numeric:tabular-nums;font-size:11px}.cvtkAW_settingsGrid{flex-wrap:wrap;align-items:center;gap:16px;display:flex}.cvtkAW_settingItem{align-items:center;gap:8px;font-size:13px;display:flex}.cvtkAW_settingItem input[type=checkbox]{accent-color:currentColor}.cvtkAW_settingItem input[type=number]{border:1px solid color-mix(in srgb, currentColor 25%, transparent);width:90px;color:inherit;font:inherit;background:0 0;border-radius:6px;padding:3px 8px;font-size:13px}.cvtkAW_settingItem select{border:1px solid color-mix(in srgb, currentColor 25%, transparent);color:inherit;font:inherit;background:0 0;border-radius:6px;padding:3px 8px;font-size:13px}.cvtkAW_settingItem input:focus-visible,.cvtkAW_settingItem select:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}";
+		const css$3 = ".cvtkAW_section{color:inherit;flex-direction:column;gap:16px;display:flex}.cvtkAW_header{justify-content:space-between;align-items:center;gap:12px;display:flex}.cvtkAW_currentProvider{opacity:.75;font-size:13px}.cvtkAW_refreshBtn{appearance:none;color:inherit;font:inherit;cursor:pointer;opacity:.85;background:0 0;border:1px solid;border-radius:8px;padding:4px 12px;font-size:12px;transition:opacity .12s,background-color .12s}.cvtkAW_refreshBtn:hover:not(:disabled){opacity:1;background:color-mix(in srgb, currentColor 8%, transparent)}.cvtkAW_refreshBtn:disabled{cursor:default;opacity:.5}.cvtkAW_refreshBtn:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_tabs{border-bottom:1px solid color-mix(in srgb, currentColor 14%, transparent);gap:4px;display:flex}.cvtkAW_tab{appearance:none;color:inherit;font:inherit;cursor:pointer;opacity:.65;background:0 0;border:none;border-bottom:2px solid #0000;margin-bottom:-1px;padding:6px 14px;font-size:13px}.cvtkAW_tab:hover{opacity:.9}.cvtkAW_tab:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_tabActive{opacity:1;border-bottom-color:currentColor;font-weight:600}.cvtkAW_card{border:1px solid color-mix(in srgb, currentColor 14%, transparent);border-radius:12px;flex-direction:column;gap:10px;padding:14px 16px;display:flex}.cvtkAW_cardTitle{letter-spacing:.04em;text-transform:uppercase;opacity:.6;font-size:12px;font-weight:600}.cvtkAW_statRow{flex-wrap:wrap;gap:18px;display:flex}.cvtkAW_stat{flex-direction:column;gap:2px;display:flex}.cvtkAW_statValue{font-variant-numeric:tabular-nums;font-size:18px;font-weight:600}.cvtkAW_statLabel{opacity:.6;font-size:11px}.cvtkAW_providerRow{border-top:1px solid color-mix(in srgb, currentColor 8%, transparent);justify-content:space-between;align-items:center;gap:12px;padding:6px 0;font-size:13px;display:flex}.cvtkAW_providerRow:first-of-type{border-top:none}.cvtkAW_providerName{align-items:center;gap:8px;min-width:0;display:flex}.cvtkAW_providerTokens{font-variant-numeric:tabular-nums;opacity:.75;white-space:nowrap}.cvtkAW_providerBalance{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}.cvtkAW_currentBadge{border:1px solid color-mix(in srgb, currentColor 35%, transparent);opacity:.8;border-radius:999px;flex:none;padding:1px 7px;font-size:10px;font-weight:600}.cvtkAW_chart{flex-direction:column;gap:12px;display:flex}.cvtkAW_chartProvider{flex-direction:column;gap:4px;display:flex}.cvtkAW_chartHead{justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;display:flex}.cvtkAW_chartTokens{font-variant-numeric:tabular-nums;opacity:.65;white-space:nowrap;font-size:11px}.cvtkAW_chartBar{background:color-mix(in srgb, currentColor 8%, transparent);border-radius:999px;height:8px;display:block;overflow:hidden}.cvtkAW_chartFill{background:color-mix(in srgb, currentColor 55%, transparent);border-radius:999px;height:100%;transition:width .3s;display:block}.cvtkAW_chartModel{opacity:.8;grid-template-columns:minmax(80px,180px) 1fr auto;align-items:center;gap:8px;padding-left:14px;font-size:11px;display:grid}.cvtkAW_chartModelName{text-overflow:ellipsis;white-space:nowrap;opacity:.8;overflow:hidden}.cvtkAW_chartModelBar{background:color-mix(in srgb, currentColor 6%, transparent);border-radius:999px;height:4px;display:block;overflow:hidden}.cvtkAW_chartModelFill{background:color-mix(in srgb, currentColor 35%, transparent);border-radius:999px;height:100%;transition:width .3s;display:block}.cvtkAW_trendAxis{opacity:.5;font-variant-numeric:tabular-nums;justify-content:space-between;font-size:10px;display:flex}.cvtkAW_muted{opacity:.6;font-size:12px}.cvtkAW_voucherPreview canvas{border-radius:8px;width:100%;height:auto;display:block}.cvtkAW_buttonRow{gap:8px;display:flex}.cvtkAW_errorLine{opacity:.75;font-size:12px}.cvtkAW_planCard{flex-direction:column;gap:8px;display:flex}.cvtkAW_planHead{justify-content:space-between;align-items:baseline;gap:10px;display:flex}.cvtkAW_planName{font-size:14px;font-weight:600}.cvtkAW_windowRow{flex-direction:column;gap:4px;display:flex}.cvtkAW_windowLabel{opacity:.8;font-variant-numeric:tabular-nums;justify-content:space-between;font-size:12px;display:flex}.cvtkAW_bar{background:color-mix(in srgb, currentColor 10%, transparent);border-radius:999px;height:6px;overflow:hidden}.cvtkAW_barFill{background:color-mix(in srgb, currentColor 55%, transparent);border-radius:999px;height:100%;transition:width .3s}.cvtkAW_barWarn{background:#d97706}.cvtkAW_barLow{background:#dc2626}.cvtkAW_resetLine{opacity:.55;font-variant-numeric:tabular-nums;font-size:11px}.cvtkAW_settingsGrid{flex-wrap:wrap;align-items:center;gap:16px;display:flex}.cvtkAW_settingItem{align-items:center;gap:8px;font-size:13px;display:flex}.cvtkAW_settingItem input[type=checkbox]{accent-color:currentColor}.cvtkAW_settingItem input[type=number]{border:1px solid color-mix(in srgb, currentColor 25%, transparent);width:90px;color:inherit;font:inherit;background:0 0;border-radius:6px;padding:3px 8px;font-size:13px}.cvtkAW_settingItem select{border:1px solid color-mix(in srgb, currentColor 25%, transparent);color:inherit;font:inherit;background:0 0;border-radius:6px;padding:3px 8px;font-size:13px}.cvtkAW_settingItem input:focus-visible,.cvtkAW_settingItem select:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_footCard{box-sizing:border-box;border:1px solid color-mix(in srgb, currentColor 14%, transparent);background:color-mix(in srgb, currentColor 4%, transparent);width:100%;color:inherit;border-radius:10px;margin:4px 0 8px;transition:background-color .12s;position:relative}.cvtkAW_footCard:hover{background:color-mix(in srgb, currentColor 7%, transparent)}.cvtkAW_footMain{appearance:none;box-sizing:border-box;width:100%;color:inherit;font:inherit;text-align:left;cursor:pointer;background:0 0;border:none;border-radius:10px;flex-direction:column;gap:4px;padding:9px 12px;display:flex}.cvtkAW_footMain:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_footToggle{appearance:none;width:20px;height:20px;color:inherit;cursor:pointer;opacity:.55;background:0 0;border:none;border-radius:6px;justify-content:center;align-items:center;padding:0;transition:opacity .12s,background-color .12s;display:inline-flex;position:absolute;top:6px;right:6px}.cvtkAW_footCard:hover .cvtkAW_footToggle{opacity:.8}.cvtkAW_footToggle:hover{opacity:1;background:color-mix(in srgb, currentColor 10%, transparent)}.cvtkAW_footToggle:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb, currentColor 45%, transparent);outline:none}.cvtkAW_footToggle svg{display:block}.cvtkAW_footHead{justify-content:space-between;align-items:baseline;gap:8px;display:flex}.cvtkAW_footTitle{opacity:.65;white-space:nowrap;align-items:center;gap:6px;min-width:0;font-size:12px;display:inline-flex}.cvtkAW_footTitle svg{flex:none;display:block}.cvtkAW_footValue{font-variant-numeric:tabular-nums;white-space:nowrap;margin-right:18px;font-size:15px;font-weight:600}.cvtkAW_footLine{opacity:.7;font-variant-numeric:tabular-nums;text-overflow:ellipsis;white-space:nowrap;font-size:11px;overflow:hidden}.cvtkAW_footMeta{opacity:.5;font-variant-numeric:tabular-nums;font-size:10px}.cvtkAW_footCardCollapsed .cvtkAW_footMain{padding:5px 12px}.cvtkAW_footStrip{white-space:nowrap;align-items:center;gap:6px;padding-right:20px;font-size:12px;display:flex;overflow:hidden}.cvtkAW_footStrip svg{opacity:.65;flex:none;display:block}.cvtkAW_footStripLabel{opacity:.65;text-overflow:ellipsis;overflow:hidden}.cvtkAW_footStripValue{font-variant-numeric:tabular-nums;margin-left:auto;font-weight:600}[data-dsh-frame][data-sidebar-collapsed] .cvtkAW_footCard,[data-sidebar-collapsed] .cvtkAW_footCard{display:none}";
 		const tagId$3 = "@linxin666/dsh-web-all/packages/dsh-usage/src/client/usage.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$3) + "]") === null) {
 			const tag = document.createElement("style");
@@ -43065,6 +43075,18 @@ window.__ModuleLoader__.load({
 			"currentBadge": "cvtkAW_currentBadge",
 			"currentProvider": "cvtkAW_currentProvider",
 			"errorLine": "cvtkAW_errorLine",
+			"footCard": "cvtkAW_footCard",
+			"footCardCollapsed": "cvtkAW_footCardCollapsed",
+			"footHead": "cvtkAW_footHead",
+			"footLine": "cvtkAW_footLine",
+			"footMain": "cvtkAW_footMain",
+			"footMeta": "cvtkAW_footMeta",
+			"footStrip": "cvtkAW_footStrip",
+			"footStripLabel": "cvtkAW_footStripLabel",
+			"footStripValue": "cvtkAW_footStripValue",
+			"footTitle": "cvtkAW_footTitle",
+			"footToggle": "cvtkAW_footToggle",
+			"footValue": "cvtkAW_footValue",
 			"header": "cvtkAW_header",
 			"muted": "cvtkAW_muted",
 			"planCard": "cvtkAW_planCard",
@@ -43744,7 +43766,7 @@ window.__ModuleLoader__.load({
 				return "";
 			}
 		}
-		function formatClock(ms) {
+		function formatClock$1(ms) {
 			try {
 				return new Date(ms).toLocaleTimeString([], {
 					hour: "2-digit",
@@ -43835,7 +43857,7 @@ window.__ModuleLoader__.load({
 				]
 			});
 		}
-		function balanceLine(provider) {
+		function balanceLine$1(provider) {
 			if (provider.balance !== void 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 				className: usage_module_css_default.providerBalance,
 				children: [
@@ -43871,7 +43893,7 @@ window.__ModuleLoader__.load({
 					})]
 				}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 					className: usage_module_css_default.providerTokens,
-					children: balanceLine(provider)
+					children: balanceLine$1(provider)
 				})]
 			});
 		}
@@ -44007,7 +44029,7 @@ window.__ModuleLoader__.load({
 								deepseekVisible && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: usage_module_css_default.muted,
 									"data-dsh-part": "peak-status",
-									children: t$2(deepseekPeriod.peak ? "usage.peak.on" : "usage.peak.off", { time: formatClock(deepseekPeriod.boundaryMs) })
+									children: t$2(deepseekPeriod.peak ? "usage.peak.on" : "usage.peak.off", { time: formatClock$1(deepseekPeriod.boundaryMs) })
 								}),
 								snapshot.usage.today.totals.calls === 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: usage_module_css_default.muted,
@@ -44458,6 +44480,473 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
+		//#region ../dsh-usage/src/client/body-mutations.ts
+		/** Cross-bundle registry key; `Symbol.for` so every module copy agrees. */
+		const HUB_KEY$1 = Symbol.for("dsh-web.body-mutation-hub");
+		const INVALIDATION_ONLY$1 = Symbol.for("dsh-web.body-mutation-invalidation");
+		function needsRecords$1(subscribers) {
+			for (const listener of subscribers) if (!listener[INVALIDATION_ONLY$1]) return true;
+			return false;
+		}
+		/**
+		* Subscribe to a coalesced DOM re-check without retaining mutation records.
+		* The marked wrapper also works with an older hub, which delivers records
+		* that it simply ignores until a page reload picks up the updated hub.
+		*/
+		function subscribeBodyInvalidations$1(subscriber) {
+			const listener = () => {
+				subscriber();
+			};
+			listener[INVALIDATION_ONLY$1] = true;
+			return subscribeBodyMutations$1(listener);
+		}
+		/**
+		* Subscribe to body-level childList mutations.
+		* @param subscriber - called at most once per animation frame with the records
+		*   collected since the previous flush; must be safe to run repeatedly.
+		* @returns the disposer removing this subscriber (and the observer when it was
+		*   the last one).
+		*/
+		function subscribeBodyMutations$1(subscriber) {
+			if (typeof globalThis === "undefined" || typeof document === "undefined") return () => {};
+			if (typeof MutationObserver !== "function") return () => {};
+			const registry = globalThis;
+			let hub = registry[HUB_KEY$1];
+			if (hub === void 0) {
+				const subscribers = /* @__PURE__ */ new Set();
+				const created = {
+					observer: void 0,
+					subscribers,
+					pending: [],
+					scheduled: false
+				};
+				const flush = () => {
+					created.frame = void 0;
+					created.scheduled = false;
+					const batch = created.pending;
+					created.pending = [];
+					for (const listener of [...subscribers]) {
+						if (!subscribers.has(listener)) continue;
+						try {
+							listener(batch);
+						} catch {}
+					}
+				};
+				const schedule = () => {
+					if (created.scheduled) return;
+					created.scheduled = true;
+					if (typeof requestAnimationFrame === "function") created.frame = requestAnimationFrame(flush);
+					else flush();
+				};
+				created.observer = new MutationObserver((records) => {
+					if (needsRecords$1(subscribers)) for (const record of records) created.pending.push(record);
+					schedule();
+				});
+				created.observer.observe(document.body ?? document.documentElement, {
+					childList: true,
+					subtree: true
+				});
+				registry[HUB_KEY$1] = created;
+				hub = created;
+			}
+			const active = hub;
+			active.subscribers.add(subscriber);
+			let subscribed = true;
+			return () => {
+				if (!subscribed) return;
+				subscribed = false;
+				active.subscribers.delete(subscriber);
+				if (!needsRecords$1(active.subscribers)) active.pending = [];
+				if (active.subscribers.size === 0 && registry[HUB_KEY$1] === active) {
+					active.observer.disconnect();
+					if (active.frame !== void 0 && typeof cancelAnimationFrame === "function") cancelAnimationFrame(active.frame);
+					active.frame = void 0;
+					active.pending = [];
+					active.scheduled = false;
+					delete registry[HUB_KEY$1];
+				}
+			};
+		}
+		//#endregion
+		//#region ../dsh-usage/src/client/UsageFootCard.tsx
+		/**
+		* Sidebar foot card: the compact usage glance seated below the shell sidebar's
+		* Settings row. It is deliberately a GLANCE, not the panel the 2026-09-18
+		* removal took out. Two states, persisted across reloads:
+		*
+		* - expanded (default): a price-first headline (today's estimated spend,
+		*   falling back to today's tokens when nothing priced was recorded), a
+		*   tokens/calls line, up to two configured-provider balances, and an
+		*   updated-at footer;
+		* - collapsed: a one-line strip with the gauge glyph, the label and the
+		*   headline value.
+		*
+		* The card body is one button that opens the settings panel on the usage
+		* section, so detail lives in exactly one place; the corner chevron toggles
+		* the collapse state (sibling buttons — buttons inside a button are invalid
+		* HTML).
+		*
+		* Data comes from the same shared store the settings section reads; the card
+		* runs its own relaxed poll loop (30 s, visible-tab only) because the sidebar
+		* foot is permanently mounted. The card disappears while the plugin is
+		* disabled (settings flag) or while the host serves no usage routes (a 404
+		* means the host half is off), matching the section's own gating.
+		* @module @linxin666/dsh-usage/client/UsageFootCard
+		*/
+		/** Poll cadence of the permanently seated card; the section's 10 s loop stays its own. */
+		const FOOT_CARD_POLL_MS = 3e4;
+		/** localStorage key holding the collapsed flag ('1' = collapsed strip). */
+		const FOOT_CARD_COLLAPSED_KEY = "dsh-usage.foot-card.collapsed";
+		/** At most this many provider balances render before a +N overflow marker. */
+		const BALANCE_CAP = 2;
+		/** Read the persisted collapsed flag (absent = expanded). */
+		function readFootCardCollapsed() {
+			try {
+				return window.localStorage.getItem(FOOT_CARD_COLLAPSED_KEY) === "1";
+			} catch {
+				return false;
+			}
+		}
+		/** Persist the collapsed flag; storage failures keep the session state. */
+		function writeFootCardCollapsed(collapsed) {
+			try {
+				window.localStorage.setItem(FOOT_CARD_COLLAPSED_KEY, collapsed ? "1" : "0");
+			} catch {}
+		}
+		/** Inline gauge glyph, 14px beside the card title. */
+		function GaugeIcon() {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("svg", {
+				viewBox: "0 0 16 16",
+				width: "14",
+				height: "14",
+				fill: "none",
+				stroke: "currentColor",
+				strokeWidth: "1.3",
+				strokeLinecap: "round",
+				strokeLinejoin: "round",
+				"aria-hidden": "true",
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M2.5 12.5a7 7 0 0 1 11 -4.3" }),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "M8 12.5V8.2l2.9-2.1" }),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+						cx: "8",
+						cy: "12.5",
+						r: "1"
+					})
+				]
+			});
+		}
+		/** Disclosure chevrons: down collapses the expanded card, up expands the strip. */
+		function ChevronIcon(props) {
+			return props.collapsed ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+				viewBox: "0 0 16 16",
+				width: "12",
+				height: "12",
+				fill: "none",
+				stroke: "currentColor",
+				strokeWidth: "1.4",
+				strokeLinecap: "round",
+				strokeLinejoin: "round",
+				"aria-hidden": "true",
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "m4 10 4-4 4 4" })
+			}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("svg", {
+				viewBox: "0 0 16 16",
+				width: "12",
+				height: "12",
+				fill: "none",
+				stroke: "currentColor",
+				strokeWidth: "1.4",
+				strokeLinecap: "round",
+				strokeLinejoin: "round",
+				"aria-hidden": "true",
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("path", { d: "m4 6 4 4 4-4" })
+			});
+		}
+		/** A provider row worth showing a balance for: configured, with a probed balance. */
+		function balanceRow(provider) {
+			const supported = provider.balanceSupported === true || provider.balanceSupported === void 0 && provider.supported;
+			return provider.credential !== "none" && supported && provider.balance !== void 0;
+		}
+		/** Currency-symbol prefix for the priced balances (CNY/USD), else the ISO code. */
+		function formatBalance(balance) {
+			const currency = balance.currency.toUpperCase();
+			if (currency === "CNY") return "¥" + balance.totalBalance;
+			if (currency === "USD") return "$" + balance.totalBalance;
+			return currency + " " + balance.totalBalance;
+		}
+		function formatClock(ms) {
+			try {
+				return new Date(ms).toLocaleTimeString([], {
+					hour: "2-digit",
+					minute: "2-digit"
+				});
+			} catch {
+				return "";
+			}
+		}
+		/**
+		* The headline pair: today's priced spend, else today's tokens, else zero.
+		* tokenFallback tells the sub-line to keep only the call count instead of
+		* repeating the total the headline already shows.
+		*/
+		function headline(snapshot) {
+			const totals = snapshot.usage.today.totals;
+			if (totals.cost > 0) return {
+				label: t$2("usage.foot.cost"),
+				value: "¥" + totals.cost.toFixed(2),
+				tokenFallback: false
+			};
+			if (totals.calls > 0) return {
+				label: t$2("usage.today"),
+				value: formatTokens(totalTokens(totals)) + " tokens",
+				tokenFallback: true
+			};
+			return {
+				label: t$2("usage.foot.cost"),
+				value: "¥0.00",
+				tokenFallback: false
+			};
+		}
+		/** The tokens/calls sub-line under the headline; a quiet no-data line on an empty day. */
+		function usageLine(snapshot, tokenFallback) {
+			const totals = snapshot.usage.today.totals;
+			if (totals.calls === 0) return t$2("usage.foot.noData");
+			const calls = t$2("usage.calls", { n: totals.calls });
+			return tokenFallback ? calls : formatTokens(totalTokens(totals)) + " tokens · " + calls;
+		}
+		/** The balance line: up to BALANCE_CAP providers plus a +N overflow marker. */
+		function balanceLine(snapshot) {
+			const rows = snapshot.providers.filter(balanceRow);
+			if (rows.length === 0) return void 0;
+			return rows.slice(0, BALANCE_CAP).map((provider) => provider.displayName + " " + formatBalance(provider.balance)).join(" · ") + (rows.length > BALANCE_CAP ? " +" + String(rows.length - BALANCE_CAP) : "");
+		}
+		/** Card chrome classes for the current collapse state. */
+		function cardClass(collapsed) {
+			return collapsed ? usage_module_css_default.footCard + " " + usage_module_css_default.footCardCollapsed : usage_module_css_default.footCard;
+		}
+		/**
+		* Render the foot card content for the current store snapshot.
+		* @param props - store, poller, settings form and open callback from the mount.
+		* @returns the card, or null while disabled / host-off.
+		*/
+		function UsageFootCard(props) {
+			const { store, poll, onOpen, settings, locale } = props;
+			const ui = (0, react.useSyncExternalStore)(store.subscribe, store.getSnapshot);
+			const [, bump] = (0, react.useState)(0);
+			(0, react.useEffect)(() => settings.subscribe(() => bump((count) => count + 1)), [settings]);
+			(0, react.useEffect)(() => locale?.subscribe(() => bump((count) => count + 1)), [locale]);
+			const enabled = settings.getSnapshot().value?.enabled ?? true;
+			const [collapsed, setCollapsed] = (0, react.useState)(readFootCardCollapsed);
+			const toggleCollapsed = () => {
+				setCollapsed((current) => {
+					writeFootCardCollapsed(!current);
+					return !current;
+				});
+			};
+			(0, react.useEffect)(() => {
+				if (!enabled) return void 0;
+				poll();
+				let timer;
+				const start = () => {
+					if (timer === void 0 && document.visibilityState === "visible") timer = window.setInterval(poll, FOOT_CARD_POLL_MS);
+				};
+				const onVisibility = () => {
+					if (document.visibilityState === "visible") {
+						poll();
+						start();
+					} else if (timer !== void 0) {
+						window.clearInterval(timer);
+						timer = void 0;
+					}
+				};
+				start();
+				document.addEventListener("visibilitychange", onVisibility);
+				return () => {
+					if (timer !== void 0) window.clearInterval(timer);
+					document.removeEventListener("visibilitychange", onVisibility);
+				};
+			}, [poll, enabled]);
+			if (!enabled) return null;
+			const snapshot = ui.snapshot;
+			if (snapshot === null && ui.status === "error" && /failed: 404/.test(ui.error ?? "")) return null;
+			const toggle = /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+				type: "button",
+				className: usage_module_css_default.footToggle,
+				"data-dsh-part": "foot-card-toggle",
+				"aria-label": t$2(collapsed ? "usage.foot.expand" : "usage.foot.collapse"),
+				title: t$2(collapsed ? "usage.foot.expand" : "usage.foot.collapse"),
+				onClick: toggleCollapsed,
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)(ChevronIcon, { collapsed })
+			});
+			if (snapshot === null) {
+				const quiet = ui.status === "error" ? t$2("usage.error", { error: ui.error ?? "" }) : t$2("usage.loading");
+				return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					className: cardClass(collapsed),
+					"data-dsh-plugin": "usage",
+					"data-dsh-part": "foot-card",
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+						type: "button",
+						className: usage_module_css_default.footMain,
+						"data-dsh-part": "foot-card-main",
+						"aria-label": t$2("usage.foot.open"),
+						title: t$2("usage.foot.open"),
+						onClick: onOpen,
+						children: collapsed ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+							className: usage_module_css_default.footStrip,
+							"data-dsh-part": "foot-card-strip",
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(GaugeIcon, {}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: usage_module_css_default.footStripValue,
+								children: "—"
+							})]
+						}) : /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: usage_module_css_default.footHead,
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+								className: usage_module_css_default.footTitle,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(GaugeIcon, {}), t$2("usage.title")]
+							})
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: usage_module_css_default.footLine,
+							children: quiet
+						})] })
+					}), toggle]
+				});
+			}
+			const head = headline(snapshot);
+			const balances = balanceLine(snapshot);
+			if (collapsed) return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: cardClass(true),
+				"data-dsh-plugin": "usage",
+				"data-dsh-part": "foot-card",
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+					type: "button",
+					className: usage_module_css_default.footMain,
+					"data-dsh-part": "foot-card-main",
+					"aria-label": t$2("usage.foot.open"),
+					title: t$2("usage.foot.open"),
+					onClick: onOpen,
+					children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+						className: usage_module_css_default.footStrip,
+						"data-dsh-part": "foot-card-strip",
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)(GaugeIcon, {}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: usage_module_css_default.footStripLabel,
+								children: head.label
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: usage_module_css_default.footStripValue,
+								children: head.value
+							})
+						]
+					})
+				}), toggle]
+			});
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: cardClass(false),
+				"data-dsh-plugin": "usage",
+				"data-dsh-part": "foot-card",
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
+					type: "button",
+					className: usage_module_css_default.footMain,
+					"data-dsh-part": "foot-card-main",
+					"aria-label": t$2("usage.foot.open"),
+					title: t$2("usage.foot.open"),
+					onClick: onOpen,
+					children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+							className: usage_module_css_default.footHead,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+								className: usage_module_css_default.footTitle,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)(GaugeIcon, {}), head.label]
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+								className: usage_module_css_default.footValue,
+								children: head.value
+							})]
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: usage_module_css_default.footLine,
+							"data-dsh-part": "foot-card-usage",
+							children: usageLine(snapshot, head.tokenFallback)
+						}),
+						balances !== void 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: usage_module_css_default.footLine,
+							"data-dsh-part": "foot-card-balances",
+							children: balances
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: usage_module_css_default.footMeta,
+							children: t$2("usage.updated", { time: formatClock(snapshot.updatedAt) })
+						})
+					]
+				}), toggle]
+			});
+		}
+		/** The shell sidebar's foot area (footer actions + the Settings row), when mounted. */
+		function footArea() {
+			return document.querySelector("[data-pane=\"sidebar\"], [class*=\"sidebarCol\"]")?.querySelector("[class*=\"footArea\"]") ?? void 0;
+		}
+		/**
+		* Open the settings panel on the usage section. The shell owns the panel's
+		* open state and exposes no service for it, so the card replays the user's
+		* own path: activate the sidebar Settings trigger, then pick the nav row
+		* carrying the section's (localized) label. Every step degrades silently —
+		* with the panel already open only the nav pick runs, and a missing row
+		* leaves the panel on its default section.
+		* @param label - the usage section's nav label in the active locale.
+		*/
+		function openUsageSettings(label) {
+			/** Click the nav row carrying the usage label inside the open panel. */
+			const pick = (panel) => {
+				const wanted = label();
+				for (const row of panel.querySelectorAll("nav button")) if (row.textContent !== null && row.textContent.includes(wanted)) {
+					row.click();
+					return;
+				}
+			};
+			const open = document.querySelector("[role=\"dialog\"]");
+			if (open !== null) {
+				pick(open);
+				return;
+			}
+			(document.querySelector("[data-pane=\"sidebar\"], [class*=\"sidebarCol\"]")?.querySelector("[class*=\"settingsArea\"] button"))?.click();
+			let tries = 0;
+			const attempt = () => {
+				const panel = document.querySelector("[role=\"dialog\"]");
+				if (panel !== null) {
+					pick(panel);
+					return;
+				}
+				tries += 1;
+				if (tries <= 20) window.setTimeout(attempt, 50);
+			};
+			window.setTimeout(attempt, 0);
+		}
+		/**
+		* Mount the sidebar foot card below the Settings row.
+		* @param props - the store/poll/settings/open inputs of the apply body.
+		* @returns disposer removing the container and its observers.
+		*/
+		function mountUsageFootCard(props) {
+			if (typeof document !== "undefined" && document.querySelector("[data-dsh-usage-foot-card]") !== null) return () => {};
+			const container = document.createElement("div");
+			container.setAttribute("data-dsh-usage-foot-card", "");
+			const root = (0, react_dom_client.createRoot)(container);
+			root.render((0, react.createElement)(UsageFootCard, props));
+			/** Keep the container the foot area's last child — directly below Settings. */
+			const place = () => {
+				const foot = footArea();
+				if (foot === void 0) return;
+				if (container.parentElement !== foot || foot.lastElementChild !== container) foot.append(container);
+			};
+			place();
+			const unsubscribeBody = subscribeBodyInvalidations$1(place);
+			return () => {
+				unsubscribeBody();
+				root.unmount();
+				container.remove();
+			};
+		}
+		//#endregion
 		//#region ../dsh-usage/src/client/index.ts
 		var client_exports$3 = /* @__PURE__ */ __exportAll({
 			apply: () => apply$4,
@@ -44538,6 +45027,20 @@ window.__ModuleLoader__.load({
 				refresh,
 				settings: settingsForm
 			});
+			const disposeFootCard = mountUsageFootCard({
+				store,
+				poll,
+				settings: settingsForm,
+				onOpen: () => {
+					openUsageSettings(() => t$2("usage.title"));
+				},
+				locale: ctx.locale
+			});
+			ctx.effect(() => () => {
+				try {
+					disposeFootCard();
+				} catch {}
+			}, "dsh-usage: sidebar foot card");
 			ctx.slots.inject("settings.section", () => {
 				try {
 					const unregister = ctx.slots.register({
