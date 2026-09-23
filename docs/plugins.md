@@ -115,6 +115,7 @@ dsh plugin --profile web add link:<dsh-web>/packages/dsh-web-all
 
 - **package.json 的 `dsh.bundle.patch` 声明**：指向包内 `cordis.patch.yml`，这是官方 bundle 清单，`dsh plugin` 依赖它识别与挂载插件。
 - **`dsh.engines.dsh` 最低运行时声明**（issue #754）：每个发布包必须在 `dsh` 对象内声明 `"engines": { "dsh": ">=X.Y.Z[-rc.N]" }`（如 `"dsh": ">=0.1.1-rc.1"`），唯一支持形式为 `>= <semver>`（顶层 `engines.dsh` 是插件管理器兼容读取的备用位，新声明统一用 `dsh.engines.dsh`）。该字段随 npm 清单发布，插件管理器在更新检查与更新前读取并据此提示/拦截；`scripts/family-dsh-engines.test.mjs` 强制每个家族包（含聚合包 `dsh-web-all`）与插件模板都声明，且声明的下限不得低于插件模板的 cohort 下限。SDK cohort 升级时必须同步提升所有包的该字段：宿主版本门槛跟随当前适配的 cohort，根 README 徽章与 CI 挂载冒烟道使用同一版本（决策见 [dsh-host-floor-tracks-cohort](../.agents/notes/implemented/architecture/2026-09-01-dsh-host-floor-tracks-cohort.zh.md)）。
+- **`@deepseek-ai/dsh` 宿主 peer 声明**：每个发布包还必须在 `peerDependencies` 中声明 `"@deepseek-ai/dsh": ">=X.Y.Z[-rc.N]"`，与 `dsh.engines.dsh` 下限同值（同以插件模板的 cohort 下限为源），唯一支持形式同样是 `>= <semver>`。它让 npm 解析器在安装插件时直接看到宿主版本要求，与插件管理器读取的 `dsh.engines.dsh` 互为补充；`scripts/family-dsh-engines.test.mjs` 强制每个家族包（含聚合包 `dsh-web-all`）与插件模板都声明，且不低于 cohort 下限。宿主是全局安装（profile 树里没有 `@deepseek-ai/dsh`，且 `autoInstallPeers: false`），该 peer 因此只用于声明与告警，不会被自动安装。
 - **cordis.patch.yml insert 行格式**（包名用家族 scope `@linxin666`，与 npm 发布名一致）：
 
 ```yaml

@@ -47,6 +47,9 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.1.7-alpha.2"
+  },
   "dependencies": {
     "@deepseek-ai/schemastery": "^3.18.4"
   },

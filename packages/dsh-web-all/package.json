@@ -49,6 +49,9 @@
     "typecheck": "tsc --noEmit",
     "watch": "tsdown --watch"
   },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.1.7-alpha.2"
+  },
   "license": "Apache-2.0",
   "files": [
     "lib",

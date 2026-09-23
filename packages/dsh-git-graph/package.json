@@ -61,6 +61,7 @@
     "@deepseek-ai/schemastery": "^3.18.4"
   },
   "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.1.7-alpha.2",
     "react": "^18.2.0"
   },
   "devDependencies": {
