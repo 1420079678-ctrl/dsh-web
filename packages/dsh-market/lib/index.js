@@ -1011,6 +1011,85 @@ function isLoopbackRequest(request) {
 	}
 }
 //#endregion
+//#region src/http.ts
+/** Default body cap for readJsonBody: 64 KiB. */
+const DEFAULT_JSON_BODY_MAX_BYTES = 64 * 1024;
+/** Family-default JSON response headers; callers may append or override. */
+const JSON_HEADERS = {
+	"content-type": "application/json; charset=utf-8",
+	"referrer-policy": "no-referrer"
+};
+/**
+* Lenient bounded body reader: parse a request body as JSON, or null on an
+* empty body, invalid JSON, or a body past maxBytes (default 64 KiB).
+* Overflow destroys the request instead of draining the remainder (no drain
+* call, matching the current repo-wide behavior); callers must not keep
+* reading the request afterwards. With objectOnly, non-JSON-object payloads
+* also yield null.
+*/
+async function readJsonBody(req, opts = {}) {
+	const maxBytes = opts.maxBytes ?? DEFAULT_JSON_BODY_MAX_BYTES;
+	const chunks = [];
+	let size = 0;
+	for await (const chunk of req) {
+		const buffer = chunk;
+		size += buffer.length;
+		if (size > maxBytes) {
+			req.destroy();
+			return null;
+		}
+		chunks.push(buffer);
+	}
+	const text = Buffer.concat(chunks).toString("utf8");
+	if (text === "") return null;
+	try {
+		const parsed = JSON.parse(text);
+		if (opts.objectOnly && !isJsonObject(parsed)) return null;
+		return parsed;
+	} catch {
+		return null;
+	}
+}
+/** Whether a value is a JSON object: typeof object, not null, not an array. */
+function isJsonObject(value) {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+/**
+* Request init that asks a remote origin for an uncompressed body.
+*
+* The DSH host boots `@deepseek-ai/dsh-http-proxy`, whose top-level import of
+* the npm `undici` copy replaces the legacy `undici.globalDispatcher.1` slot
+* Node's built-in `fetch()` reads. That cross-major wrapper drops the
+* `content-encoding` header and automatic decompression, so a plain fetch
+* resolves to raw gzip/brotli/zstd bytes — compressed noise no JSON or text
+* consumer can read. Every host fetch that parses a remote body must request
+* identity encoding. Caller headers survive; `accept-encoding` is forced to
+* `identity` because a caller value has no decoder behind it in this host.
+* @param init - the caller's request init (signal, headers, method, ...).
+* @returns a copy with `accept-encoding: identity` merged in.
+*/
+function withIdentityEncoding(init = {}) {
+	const headers = new Headers(init.headers);
+	headers.set("accept-encoding", "identity");
+	return {
+		...init,
+		headers
+	};
+}
+/**
+* Write one JSON response. Default headers are the family defaults
+* (content-type and referrer-policy); caller headers are appended or
+* override them.
+*/
+function writeJson(res, status, body, headers = {}) {
+	const payload = JSON.stringify(body);
+	res.writeHead(status, {
+		...JSON_HEADERS,
+		...headers
+	});
+	res.end(payload);
+}
+//#endregion
 //#region src/core/installer.ts
 /**
 * Market asset installer core: builds the download plan from the public
@@ -1119,10 +1198,7 @@ function isAbortError(err) {
 /** fetch with a hard timeout; a timeout becomes a typed MarketInstallError. */
 async function fetchWithTimeout(url, fetchImpl, code, timeoutMs) {
 	try {
-		return await fetchImpl(url, {
-			signal: AbortSignal.timeout(timeoutMs),
-			headers: { "accept-encoding": "identity" }
-		});
+		return await fetchImpl(url, withIdentityEncoding({ signal: AbortSignal.timeout(timeoutMs) }));
 	} catch (err) {
 		if (isAbortError(err)) throw new MarketInstallError(code, `fetch timed out after ${timeoutMs}ms: ${url}`);
 		throw err;
@@ -1250,63 +1326,6 @@ async function installAsset(kind, id, options) {
 		files: plan.length,
 		dest
 	};
-}
-//#endregion
-//#region src/http.ts
-/** Default body cap for readJsonBody: 64 KiB. */
-const DEFAULT_JSON_BODY_MAX_BYTES = 64 * 1024;
-/** Family-default JSON response headers; callers may append or override. */
-const JSON_HEADERS = {
-	"content-type": "application/json; charset=utf-8",
-	"referrer-policy": "no-referrer"
-};
-/**
-* Lenient bounded body reader: parse a request body as JSON, or null on an
-* empty body, invalid JSON, or a body past maxBytes (default 64 KiB).
-* Overflow destroys the request instead of draining the remainder (no drain
-* call, matching the current repo-wide behavior); callers must not keep
-* reading the request afterwards. With objectOnly, non-JSON-object payloads
-* also yield null.
-*/
-async function readJsonBody(req, opts = {}) {
-	const maxBytes = opts.maxBytes ?? DEFAULT_JSON_BODY_MAX_BYTES;
-	const chunks = [];
-	let size = 0;
-	for await (const chunk of req) {
-		const buffer = chunk;
-		size += buffer.length;
-		if (size > maxBytes) {
-			req.destroy();
-			return null;
-		}
-		chunks.push(buffer);
-	}
-	const text = Buffer.concat(chunks).toString("utf8");
-	if (text === "") return null;
-	try {
-		const parsed = JSON.parse(text);
-		if (opts.objectOnly && !isJsonObject(parsed)) return null;
-		return parsed;
-	} catch {
-		return null;
-	}
-}
-/** Whether a value is a JSON object: typeof object, not null, not an array. */
-function isJsonObject(value) {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-/**
-* Write one JSON response. Default headers are the family defaults
-* (content-type and referrer-policy); caller headers are appended or
-* override them.
-*/
-function writeJson(res, status, body, headers = {}) {
-	const payload = JSON.stringify(body);
-	res.writeHead(status, {
-		...JSON_HEADERS,
-		...headers
-	});
-	res.end(payload);
 }
 //#endregion
 //#region src/routes.ts

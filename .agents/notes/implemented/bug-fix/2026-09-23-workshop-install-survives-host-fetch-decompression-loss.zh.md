@@ -21,14 +21,13 @@ market 的 host 半区自行抓取 `https://dsh-market.com/manifest/skins.json` 
 
 ## Decision
 
-market 安装器在其唯一的 fetch 收口处（`packages/dsh-market/src/core/installer.ts` 的 `fetchWithTimeout`）请求 identity 编码，manifest 与每个资源下载都覆盖：
+规则只在 `shared/host/http.ts` 存在一次，即 `withIdentityEncoding(init)`：它把 `accept-encoding: identity` 合并进请求 init，同时保留调用方的 headers、method 与 signal，任何调用点都不再各自推导。market 安装器在其唯一的 fetch 收口处（`packages/dsh-market/src/core/installer.ts` 的 `fetchWithTimeout`）采用它，manifest 与每个资源下载都覆盖：
 
 ```ts
-return await fetchImpl(url, {
-  signal: AbortSignal.timeout(timeoutMs),
-  headers: { 'accept-encoding': 'identity' },
-})
+return await fetchImpl(url, withIdentityEncoding({ signal: AbortSignal.timeout(timeoutMs) }))
 ```
+
+其余所有会解析远端响应的宿主 fetch 也采用同一 helper：plugin-manager 的 npm registry 探测（`packages/dsh-plugin-manager/src/host/routes.ts`）、remote-web-ui 的 registry 与 GitHub 探测以及 `/pair-app` 内环 app-shell 抓取（`packages/dsh-remote-web-ui/src/update.ts`、`packages/dsh-remote-web-ui/src/index.ts`）、usage 的 provider 探测（`packages/dsh-usage/src/host/usage-service.ts`）。这些包本就带有 `scripts/sync-shared.mjs` 生成的 `http.ts` 副本，因此没有新增共享模块或消费者接线。
 
 源站遵守该请求：manifest 以 92 901 字节未压缩、无 `content-encoding` 抵达，因此 `JSON.parse` 与资源落盘都不再依赖宿主 fetch 是否解压。`packages/dsh-market/src/core/installer.test.ts` 新增回归用例复刻故障宿主——除非请求要求 identity，其 mock 一律返回裸 brotli——并断言整次皮肤安装成功且文件字节正确。
 
@@ -36,6 +35,7 @@ return await fetchImpl(url, {
 
 ## Alternatives considered
 
+- **在每个调用点重复写该请求头，而不是抽成共享 helper。** 否决：六处宿主 fetch 会各自复述同一条非显然的规则，且没有漂移门禁；家族本就把宿主 HTTP 工具集中在 `shared/host/http.ts`。
 - **改 `@deepseek-ai/dsh-http-proxy`，不安装 npm undici 的 dispatcher。** 本仓库否决：那是 DSH 源码，仓库规则禁止修改 DSH checkout。它仍是根治方案的上游归属。
 - **在安装器里自行解压。** 否决：故障状态下该 wrapper 连 `content-encoding` 一并隐藏，压缩体与损坏体无法区分。
 - **改用宿主 `ctx.web` 服务而不是全局 fetch。** 否决：它包装的 npm undici fetch 确实能解压，但为了一个请求头就能解决的问题去改动本模块的服务注入与 SSRF 策略并不值得；安装器已经钉死 `MARKET_ORIGIN`。
@@ -45,13 +45,15 @@ return await fetchImpl(url, {
 
 manifest 与资源始终不压缩传输（皮肤 manifest 约 93 KB，而非 brotli 约 20 KB）——为字节正确付出一点带宽。
 
-其他在宿主侧读取压缩响应的消费者暴露在同一问题下，本次有意留给各自的改动：`dsh-plugin-manager` 的 npm registry 探测、`dsh-remote-web-ui` 的更新探测、`dsh-usage` 的 provider 探测。它们要么吞掉解析失败，要么报出故障；后续应给它们同样的 identity 契约或迁到能解压的传输。
+宿主侧读取压缩响应的消费者如今都通过 `withIdentityEncoding` 共用同一契约：plugin-manager 的 npm registry 探测、remote-web-ui 的 registry/GitHub 探测与内环 app-shell 抓取、usage 的 provider 探测。新增的宿主 fetch 若解析远端响应却不带该 helper，就是对既定保证的偏离，而不再是开放问题。
 
 运行中的 `dsh web` 进程仍持有修复前的模块，因此宿主重启前 Workshop 安装依旧失败；host 半区只随服务重启而重载。
 
 ## Testing
 
 - `pnpm --filter @linxin666/dsh-client-ui-market test`（92 个用例；新增用例在缺少该请求头时失败）。
+- `pnpm --filter dsh-web-shared test`（helper 强制 identity，并保留调用方 headers、method 与 signal）。
+- `pnpm --filter @linxin666/dsh-remote-web-ui test`、`pnpm --filter @linxin666/dsh-client-ui-plugin-manager test`、`pnpm --filter @linxin666/dsh-usage test`：既有探测用例现在断言 registry、GitHub、app-shell 与 provider fetch 上的 identity 请求头。
 - `pnpm --filter @linxin666/dsh-client-ui-market typecheck`。
 - 在故障宿主的复刻里端到端验证：导入 npm undici，再用构建产物执行 `installAsset('skin', 'orca-link', { dshHome })` 打真实源站。结果 `{ok:true,...,files:15}`；`skin.json` 解析出 `id: orca-link`、`version: 0.1.0`；`assets/orca-link-light-hero.webp` 带合法 `RIFF....WEBP` 头。同一复刻里的裸 fetch 仍返回不可解析字节。
 - `pnpm build`、`pnpm libs:write`、`pnpm libs:check`（随源码指纹刷新已提交的 `lib/`）。
