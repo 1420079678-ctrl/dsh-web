@@ -1,6 +1,7 @@
 {
   "name": "@linxin666/dsh-session-archive",
   "version": "0.3.24",
+  "icon": "icon.svg",
   "description": "Session archive management for DSH Web: centralized inventory, batch archive/restore, physical delete with family cascade, and optional auto-archive / auto-cleanup policies.",
   "type": "module",
   "main": "lib/index.js",
@@ -46,7 +47,8 @@
     "lib/**/*.d.ts",
     "lib/**/*.d.ts.map",
     "src",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "icon.svg"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json && tsdown",

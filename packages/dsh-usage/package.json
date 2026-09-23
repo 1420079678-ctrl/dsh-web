@@ -2,6 +2,7 @@
   "name": "@linxin666/dsh-usage",
   "description": "Usage statistics plugin for the dsh web GUI: per-provider balance and coding-plan quota detection plus a live token usage ledger, with a compact price glance card below the sidebar's Settings row",
   "version": "0.3.24",
+  "icon": "icon.svg",
   "type": "module",
   "packageManager": "pnpm@11.7.0",
   "engines": {
@@ -27,7 +28,8 @@
     "lib/**/*.d.ts",
     "lib/**/*.d.ts.map",
     "src",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "icon.svg"
   ],
   "license": "Apache-2.0",
   "dsh": {

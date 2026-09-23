@@ -2,6 +2,7 @@
   "name": "@linxin666/dsh-client-ui-session-id",
   "description": "DSH web GUI plugin: sidebar-foot Session ID panel listing every session with its full id and one-click copy (browser-only; no source changes).",
   "version": "0.3.24",
+  "icon": "icon.svg",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -73,7 +74,8 @@
     "cordis.patch.yml",
     "README.md",
     "README.zh.md",
-    "README.i18n.yaml"
+    "README.i18n.yaml",
+    "icon.svg"
   ],
   "license": "Apache-2.0"
 }
