@@ -199,7 +199,19 @@ async function fetchWithTimeout(
   timeoutMs: number,
 ): Promise<Response> {
   try {
-    return await fetchImpl(url, { signal: AbortSignal.timeout(timeoutMs) })
+    // The host boots @deepseek-ai/dsh-http-proxy, whose top-level import of the
+    // npm 'undici' copy replaces the legacy 'undici.globalDispatcher.1' slot
+    // that Node's built-in fetch reads. That cross-major wrapper (undici v8
+    // around Node's internal undici) drops both the content-encoding header and
+    // automatic decompression, so a plain fetch() returns raw gzip/brotli/zstd
+    // bytes and every JSON.parse fails with 'Unexpected token'. Asking the
+    // market origin for identity keeps the response uncompressed, so this
+    // installer never depends on the host fetch decoding a body (regression:
+    // Workshop skin install fails on the 0.1.7-alpha.2 host).
+    return await fetchImpl(url, {
+      signal: AbortSignal.timeout(timeoutMs),
+      headers: { 'accept-encoding': 'identity' },
+    })
   } catch (err) {
     if (isAbortError(err)) {
       throw new MarketInstallError(code, `fetch timed out after ${timeoutMs}ms: ${url}`)

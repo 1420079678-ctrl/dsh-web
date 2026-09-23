@@ -1119,7 +1119,10 @@ function isAbortError(err) {
 /** fetch with a hard timeout; a timeout becomes a typed MarketInstallError. */
 async function fetchWithTimeout(url, fetchImpl, code, timeoutMs) {
 	try {
-		return await fetchImpl(url, { signal: AbortSignal.timeout(timeoutMs) });
+		return await fetchImpl(url, {
+			signal: AbortSignal.timeout(timeoutMs),
+			headers: { "accept-encoding": "identity" }
+		});
 	} catch (err) {
 		if (isAbortError(err)) throw new MarketInstallError(code, `fetch timed out after ${timeoutMs}ms: ${url}`);
 		throw err;
